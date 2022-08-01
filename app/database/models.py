@@ -1,6 +1,7 @@
 from datetime import datetime
 
-from sqlalchemy import Column, String, Integer, DateTime, Boolean
+from sqlalchemy import Column, String, Integer, DateTime, Boolean, ForeignKey
+from sqlalchemy.orm import relationship
 
 from app.database.database import Base
 
@@ -13,32 +14,32 @@ class UserEntity(Base):
     username = Column(String(20), nullable=False)
     password = Column(String(250), nullable=False)
     is_verified = Column(Boolean, nullable=False, default=False)
+    profile_image = Column(String(200), nullable=False, default="user_profile_default.png")
 
     datetime_created = Column(DateTime(timezone=True), default=datetime.utcnow)
     datetime_updated = Column(DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)
-    # 역방향 relation
-    # user_address = relationship("UserAddressEntity", back_populates="user_id")
 
-# class UserAddressEntity(Base):
-#     __tablename__ = 'user_address'
-#
-#     id = Column(Integer, primary_key=True, autoincrement="auto", index=True)
-#     # 정방향 relation
-#     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-#     address_id = Column(Integer, ForeignKey('address.id'), nullable=False)
-#
-#
-# class AddressEntity(Base):
-#     __tablename__ = 'address'
-#
-#     id = Column(Integer, primary_key=True, autoincrement="auto", index=True)
-#     zipcode = Column(String(10), nullable=True)
-#     address_primary = Column(String(200), nullable=False)
-#     address_detail = Column(String(200), nullable=False)
-#     # 역방향 relation
-#     user_address = relationship("UserAddressEntity", back_populates="address_id")
-#
-#
+
+class UserAddressEntity(Base):
+    __tablename__ = 'user_address'
+
+    id = Column(Integer, primary_key=True, autoincrement="auto", index=True)
+
+    user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
+    user = relationship("UserEntity", backref='user_address')
+
+    address_id = Column(Integer, ForeignKey('address.id'), nullable=False)
+    address = relationship("AddressEntity", backref='user_address')
+
+
+class AddressEntity(Base):
+    __tablename__ = 'address'
+
+    id = Column(Integer, primary_key=True, autoincrement="auto", index=True)
+    zipcode = Column(String(10), nullable=True)
+    address_primary = Column(String(200), nullable=False)
+    address_detail = Column(String(200), nullable=False)
+
 # class BusinessEntity(Base):
 #     __tablename__ = 'business'
 #

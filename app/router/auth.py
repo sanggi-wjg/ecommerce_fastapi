@@ -60,7 +60,12 @@ async def login_for_token(form_data: OAuth2PasswordRequestForm = Depends(), db: 
         )
 
     return Token(
-        access_token=await encode_token({"sub": find_user.email}),
+        access_token=await encode_token({
+            "user_id": find_user.id,
+            "username": find_user.username,
+            "email": find_user.email,
+            "sub": find_user.email,
+        }),
         token_type="bearer"
     )
 

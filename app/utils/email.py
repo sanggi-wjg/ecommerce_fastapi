@@ -54,7 +54,7 @@ async def send_verify_mail(email: EmailSchema, user: UserEntity):
         'username': user.username,
         'email': user.email
     })
-
+    # print(token)
     message = MessageSchema(
         recipients=email.dict().get("email"),
         subject="Verification Email",

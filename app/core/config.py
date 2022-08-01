@@ -32,6 +32,13 @@ class Settings(BaseSettings):
     def media_root(self):
         return os.path.join(self.base_root, "media")
 
+    @property
+    def user_profile_root(self):
+        path = os.path.join(self.media_root, 'profile')
+        if not os.path.exists(path):
+            os.mkdir(path)
+        return path
+
 
 @lru_cache()
 def get_settings():
