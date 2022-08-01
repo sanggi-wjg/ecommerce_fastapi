@@ -26,10 +26,36 @@ class UserAddressEntity(Base):
     id = Column(Integer, primary_key=True, autoincrement="auto", index=True)
 
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False)
-    user = relationship("UserEntity", backref='user_address')
+    user = relationship("UserEntity", backref='user_address', lazy='selectin')
 
     address_id = Column(Integer, ForeignKey('address.id'), nullable=False)
-    address = relationship("AddressEntity", backref='user_address')
+    address = relationship("AddressEntity", backref='user_address', lazy='joined')
+
+
+"""
+  * ``select`` - items should be loaded lazily when the property is
+    first accessed, using a separate SELECT statement, or identity map
+    fetch for simple many-to-one references.
+
+  * ``immediate`` - items should be loaded as the parents are loaded,
+    using a separate SELECT statement, or identity map fetch for
+    simple many-to-one references.
+
+  * ``joined`` - items should be loaded "eagerly" in the same query as
+    that of the parent, using a JOIN or LEFT OUTER JOIN.  Whether
+    the join is "outer" or not is determined by the
+    :paramref:`_orm.relationship.innerjoin` parameter.
+
+  * ``subquery`` - items should be loaded "eagerly" as the parents are
+    loaded, using one additional SQL statement, which issues a JOIN to
+    a subquery of the original statement, for each collection
+    requested.
+
+  * ``selectin`` - items should be loaded "eagerly" as the parents
+    are loaded, using one or more additional SQL statements, which
+    issues a JOIN to the immediate parent object, specifying primary
+    key identifiers using an IN clause.
+"""
 
 
 class AddressEntity(Base):

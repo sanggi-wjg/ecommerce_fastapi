@@ -29,10 +29,7 @@ def find_user_address_by_user_id(db: Session, user_id: int) -> List[UserAddressE
 
 
 def find_user_all_by_page(db: Session, offset: int, limit: int) -> List[UserEntity]:
-    return db.query(UserEntity).outerjoin(
-        UserAddressEntity
-        # ).join(        AddressEntity, AddressEntity.id == UserAddressEntity.address_id
-    ).offset(offset).limit(limit).all()
+    return db.query(UserEntity).offset(offset).limit(limit).all()
 
 
 def create_new_user(db: Session, user_create: UserCreate) -> UserEntity:
@@ -70,20 +67,16 @@ def update_user_profile_path(db: Session, user_id: int, profile_image: str) -> U
 
 
 def create_user_address(db: Session, user_id: int, address: AddressCreate) -> AddressEntity:
-    try:
-        new_address = AddressEntity(**address.dict())
-        db.add(new_address)
-        db.commit()
-        db.refresh(new_address)
+    new_address = AddressEntity(**address.dict())
+    db.add(new_address)
+    db.commit()
+    db.refresh(new_address)
 
-        new_user_address = UserAddressEntity(
-            address_id=new_address.id,
-            user_id=user_id
-        )
-        db.add(new_user_address)
-        db.commit()
-        db.refresh(new_user_address)
-        return new_address
-
-    except Exception:
-        db.rollback()
+    new_user_address = UserAddressEntity(
+        address_id=new_address.id,
+        user_id=user_id
+    )
+    db.add(new_user_address)
+    db.commit()
+    db.refresh(new_user_address)
+    return new_address
